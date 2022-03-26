@@ -11,6 +11,8 @@ def application():
     application = create_app()
     application.config.update({
         "TESTING": True,
+        "WTF_CSRF_METHODS": [],
+        "WTF_CSRF_ENABLED": False
     })
     yield application
 

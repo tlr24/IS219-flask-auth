@@ -18,21 +18,21 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login'), 302)
         else:
             user.authenticated = True
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            flash("Welcome")
-            return redirect(url_for('auth.dashboard'))
+            flash("Welcome", 'success')
+            return redirect(url_for('auth.dashboard'), 302)
     return render_template('login.html', form=form)
 
 
 @auth.route('/register', methods=['POST', 'GET'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('auth.dashboard'))
+        return redirect(url_for('auth.dashboard'), 302)
     form = register_form()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -40,11 +40,11 @@ def register():
             user = User(email=form.email.data, password=generate_password_hash(form.password.data))
             db.session.add(user)
             db.session.commit()
-            flash('Congratulations, you are now a registered user!')
-            return redirect(url_for('auth.login'))
+            flash('Congratulations, you are now a registered user!', 'success')
+            return redirect(url_for('auth.login'), 302)
         else:
             flash('Already Registered')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login'), 302)
     return render_template('register.html', form=form)
 
 
@@ -63,7 +63,7 @@ def logout():
     db.session.add(user)
     db.session.commit()
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('auth.login'), 302)
 
 
 @auth.route('/users')
@@ -96,7 +96,7 @@ def edit_user(user_id):
         user.password = form.password.data
         db.session.add(user)
         db.session.commit()
-        flash('User Edited Successfully')
+        flash('User Edited Successfully', 'success')
         return redirect(url_for('auth.browse_users'))
     return render_template('profile_edit.html', form=form)
 
@@ -111,11 +111,11 @@ def add_user():
             user = User(email=form.email.data, password=generate_password_hash(form.password.data))
             db.session.add(user)
             db.session.commit()
-            flash('Congratulations, you just created a user')
-            return redirect(url_for('auth.browse_users'))
+            flash('Congratulations, you just created a user', 'success')
+            return redirect(url_for('auth.browse_users'), 302)
         else:
             flash('Already Registered')
-            return redirect(url_for('auth.browse_users'))
+            return redirect(url_for('auth.browse_users'), 302)
     return render_template('profile_new.html', form=form)
 
 
@@ -143,7 +143,7 @@ def edit_profile():
         db.session.add(current_user)
         db.session.commit()
         flash('You Successfully Updated your Profile', 'success')
-        return redirect(url_for('auth.dashboard'))
+        return redirect(url_for('auth.dashboard'), 302)
     return render_template('profile_edit.html', form=form)
 
 @auth.route('/security', methods=['POST', 'GET'])
@@ -156,5 +156,5 @@ def edit_security():
         db.session.add(current_user)
         db.session.commit()
         flash('You Successfully Updated your Password or Email', 'success')
-        return redirect(url_for('auth.dashboard'))
+        return redirect(url_for('auth.dashboard'), 302)
     return render_template('manage_account.html', form=form)
