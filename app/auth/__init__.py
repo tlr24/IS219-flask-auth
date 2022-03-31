@@ -13,7 +13,7 @@ auth = Blueprint('auth', __name__, template_folder='templates')
 def login():
     form = login_form()
     if current_user.is_authenticated:
-        return redirect(url_for('auth.dashboard'))
+        return redirect(url_for('auth.dashboard'), 302)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
@@ -97,7 +97,7 @@ def edit_user(user_id):
         db.session.add(user)
         db.session.commit()
         flash('User Edited Successfully', 'success')
-        return redirect(url_for('auth.browse_users'))
+        return redirect(url_for('auth.browse_users'), 302)
     return render_template('profile_edit.html', form=form)
 
 
